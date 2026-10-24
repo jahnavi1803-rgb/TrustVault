@@ -1,0 +1,68 @@
+server:
+  port: ${PORT:8080}
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        same-site: lax
+        secure: false
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+  application:
+    name: TrustVault
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:${DATABASE_URL:jdbc:postgresql://localhost:5432/trustvault}}
+    username: ${SPRING_DATASOURCE_USERNAME:${DATABASE_USERNAME:postgres}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${DATABASE_PASSWORD:postgres}}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER:org.postgresql.Driver}
+
+  sql:
+    init:
+      mode: never
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 25MB
+      max-request-size: 30MB
+
+  thymeleaf:
+    cache: false
+    mode: HTML
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized
+
+supabase:
+  url: ${SUPABASE_URL:}
+  service-role-key: ${SUPABASE_SERVICE_ROLE_KEY:}
+  bucket: ${SUPABASE_STORAGE_BUCKET:trustvault-documents}
+
+trustvault:
+  security:
+    initial-admin:
+      username: ${INITIAL_ADMIN_USERNAME:admin}
+      email: ${INITIAL_ADMIN_EMAIL:admin@trustvault.local}
+      password: ${INITIAL_ADMIN_PASSWORD:AdminVault2026!Secure}
+      enabled: ${PROVISION_INITIAL_ADMIN:true}
+  audit:
+    genesis-hash: "0000000000000000000000000000000000000000000000000000000000000000"

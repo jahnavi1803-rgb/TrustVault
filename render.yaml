@@ -1,0 +1,34 @@
+# ----------------------------------------------------------------------------
+# TrustVault - Render Blueprint Infrastructure as Code
+# ----------------------------------------------------------------------------
+
+services:
+  - type: web
+    name: trustvault-app
+    env: docker
+    dockerfilePath: Dockerfile
+    plan: free
+    region: oregon
+    branch: main
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_STORAGE_BUCKET
+        value: trustvault-documents
+      - key: INITIAL_ADMIN_USERNAME
+        value: admin
+      - key: INITIAL_ADMIN_EMAIL
+        value: admin@trustvault.local
+      - key: INITIAL_ADMIN_PASSWORD
+        generateValue: true

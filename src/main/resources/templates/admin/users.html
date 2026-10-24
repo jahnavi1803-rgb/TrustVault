@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header('User Management')}"></head>
+<body class="bg-vault-black text-slate-100 min-h-screen flex flex-col md:flex-row antialiased">
+
+<aside th:replace="~{fragments/layout :: sidebar('users')}"></aside>
+
+<main class="flex-1 min-w-0 bg-vault-black flex flex-col">
+    <header class="h-16 border-b border-vault-border px-8 flex items-center justify-between bg-vault-dark/40 backdrop-blur-md">
+        <div>
+            <h1 class="text-lg font-bold text-white">Identity & Access Management</h1>
+            <p class="text-xs text-vault-muted">Manage user roles, access privileges, and account status</p>
+        </div>
+    </header>
+
+    <div class="flex-1 p-8 space-y-6 overflow-y-auto custom-scroll">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <div class="bg-vault-card border border-vault-border rounded-xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-300">
+                    <thead class="text-[11px] font-semibold text-vault-muted uppercase bg-vault-dark/80 border-b border-vault-border">
+                        <tr>
+                            <th class="px-5 py-3.5">User</th>
+                            <th class="px-5 py-3.5">Email</th>
+                            <th class="px-5 py-3.5">Role</th>
+                            <th class="px-5 py-3.5">Status</th>
+                            <th class="px-5 py-3.5">Created</th>
+                            <th class="px-5 py-3.5 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-vault-border">
+                        <tr th:each="user : ${users}" class="hover:bg-vault-dark/40 transition-colors">
+                            <td class="px-5 py-4">
+                                <div class="font-semibold text-white" th:text="${user.fullName}">Full Name</div>
+                                <div class="text-xs text-vault-muted" th:text="'@' + ${user.username}">@username</div>
+                            </td>
+                            <td class="px-5 py-4 text-xs font-mono text-slate-300" th:text="${user.email}">user@vault.com</td>
+                            <td class="px-5 py-4">
+                                <form th:action="@{'/admin/users/' + ${user.id} + '/role'}" method="post" class="inline-flex items-center space-x-1.5">
+                                    <select name="role" th:disabled="${user.id == currentUser.id}"
+                                            onchange="this.form.submit()"
+                                            class="px-2 py-1 rounded-lg bg-vault-dark border border-vault-border text-xs text-emerald-400 font-semibold focus:outline-none focus:border-emerald-500">
+                                        <option th:each="r : ${roles}" th:value="${r}" th:text="${r.displayName}" th:selected="${user.role == r}"></option>
+                                    </select>
+                                </form>
+                            </td>
+                            <td class="px-5 py-4">
+                                <span th:if="${user.enabled}" class="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">Active</span>
+                                <span th:unless="${user.enabled}" class="px-2 py-0.5 rounded text-[11px] font-semibold bg-red-500/10 text-red-400 border border-red-500/30">Disabled</span>
+                            </td>
+                            <td class="px-5 py-4 text-xs text-vault-muted" th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd')}">2026-10-24</td>
+                            <td class="px-5 py-4 text-right">
+                                <form th:action="@{'/admin/users/' + ${user.id} + '/status'}" method="post" class="inline" th:if="${user.id != currentUser.id}">
+                                    <input type="hidden" name="enabled" th:value="${!user.enabled}">
+                                    <button type="submit" th:classappend="${user.enabled ? 'bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border-red-500/30' : 'bg-emerald-500/10 hover:bg-emerald-500 text-emerald-400 hover:text-slate-950 border-emerald-500/30'}"
+                                            class="px-3 py-1 rounded-lg border text-xs font-semibold transition-colors">
+                                        <span th:text="${user.enabled ? 'Disable' : 'Enable'}">Toggle</span>
+                                    </button>
+                                </form>
+                                <span th:if="${user.id == currentUser.id}" class="text-xs text-vault-muted italic">(Current Admin)</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

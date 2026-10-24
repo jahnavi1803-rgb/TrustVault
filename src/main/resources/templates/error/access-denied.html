@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header('Access Denied')}"></head>
+<body class="bg-vault-black text-slate-100 min-h-screen flex items-center justify-center p-4 antialiased">
+
+<div class="max-w-md w-full bg-vault-card border border-red-500/30 rounded-2xl p-8 text-center shadow-2xl">
+    <div class="w-16 h-16 mx-auto rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 mb-5">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    </div>
+    
+    <h1 class="text-xl font-bold text-white mb-2">Security Authorization Failed</h1>
+    <p class="text-xs text-vault-muted mb-6" th:text="${errorMessage != null ? errorMessage : 'You do not have the necessary permissions or role clearance to perform this action. This attempt has been logged in the tamper-evident audit record.'}">
+        Access denied.
+    </p>
+
+    <div class="space-y-3">
+        <a href="/dashboard" class="w-full py-2.5 px-4 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl text-xs transition duration-200 block shadow-sm shadow-emerald-500/20">
+            Return to Dashboard
+        </a>
+        <a href="javascript:history.back()" class="w-full py-2.5 px-4 bg-vault-dark hover:bg-vault-border text-slate-300 font-semibold rounded-xl text-xs transition duration-200 block">
+            Go Back
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

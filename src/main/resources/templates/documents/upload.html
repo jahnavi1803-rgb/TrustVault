@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header('Upload Document')}"></head>
+<body class="bg-vault-black text-slate-100 min-h-screen flex flex-col md:flex-row antialiased">
+
+<aside th:replace="~{fragments/layout :: sidebar('upload')}"></aside>
+
+<main class="flex-1 min-w-0 bg-vault-black flex flex-col">
+    <header class="h-16 border-b border-vault-border px-8 flex items-center justify-between bg-vault-dark/40 backdrop-blur-md">
+        <div>
+            <h1 class="text-lg font-bold text-white">Upload to Secure Storage</h1>
+            <p class="text-xs text-vault-muted">Files are encrypted and stored in private Supabase partitions</p>
+        </div>
+        <a href="/documents" class="text-xs text-vault-muted hover:text-white transition-colors flex items-center space-x-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            <span>Back to Documents</span>
+        </a>
+    </header>
+
+    <div class="flex-1 p-8 max-w-4xl space-y-6 overflow-y-auto custom-scroll">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <form th:action="@{/documents/upload}" method="post" enctype="multipart/form-data" class="space-y-6" id="uploadForm">
+            <!-- Dropzone Area -->
+            <div class="border-2 border-dashed border-vault-border hover:border-emerald-500/60 rounded-2xl p-8 bg-vault-card/50 text-center transition-all cursor-pointer relative" id="dropArea">
+                <input type="file" name="file" id="fileInput" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                
+                <div class="space-y-3 pointer-events-none">
+                    <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-white">Click to choose a file or drag and drop</p>
+                        <p class="text-xs text-vault-muted mt-1">PDF, DOCX, XLSX, TXT, CSV, JPG, PNG up to 25 MB</p>
+                    </div>
+                    <div id="fileInfo" class="hidden text-xs text-emerald-400 font-medium py-1 px-3 bg-emerald-500/10 rounded-full inline-block"></div>
+                </div>
+            </div>
+
+            <!-- Metadata Inputs -->
+            <div class="bg-vault-card border border-vault-border rounded-xl p-6 space-y-4">
+                <h2 class="text-sm font-bold text-white uppercase tracking-wider text-vault-muted">Document Metadata</h2>
+
+                <div>
+                    <label for="title" class="block text-xs font-semibold text-slate-300 uppercase mb-1.5">Document Title (Optional)</label>
+                    <input type="text" id="title" name="title" placeholder="e.g. Q3 Audit Report"
+                           class="w-full px-4 py-2.5 rounded-xl bg-vault-dark border border-vault-border text-white text-sm focus:outline-none focus:border-emerald-500">
+                    <p class="text-[11px] text-vault-muted mt-1">Leave blank to use original filename</p>
+                </div>
+
+                <div>
+                    <label for="categoryId" class="block text-xs font-semibold text-slate-300 uppercase mb-1.5">Security Category</label>
+                    <select id="categoryId" name="categoryId"
+                            class="w-full px-4 py-2.5 rounded-xl bg-vault-dark border border-vault-border text-white text-sm focus:outline-none focus:border-emerald-500">
+                        <option value="">Select a Category...</option>
+                        <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name} + ' — ' + ${cat.description}"></option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="description" class="block text-xs font-semibold text-slate-300 uppercase mb-1.5">Description & Purpose</label>
+                    <textarea id="description" name="description" rows="3" placeholder="Context, security classification notes, or usage instructions..."
+                              class="w-full px-4 py-2.5 rounded-xl bg-vault-dark border border-vault-border text-white text-sm focus:outline-none focus:border-emerald-500"></textarea>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end space-x-3">
+                <a href="/documents" class="px-5 py-2.5 rounded-xl bg-vault-card hover:bg-vault-border text-slate-300 text-sm font-semibold transition-colors">Cancel</a>
+                <button type="submit" id="submitBtn" class="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-sm font-bold rounded-xl transition duration-200 shadow-lg shadow-emerald-500/20 flex items-center space-x-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                    <span>Upload to Vault</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const fileInfo = document.getElementById('fileInfo');
+    const dropArea = document.getElementById('dropArea');
+
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            fileInfo.textContent = `Selected: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+            fileInfo.classList.remove('hidden');
+        }
+    });
+
+    ['dragenter', 'dragover'].forEach(name => {
+        dropArea.addEventListener(name, (e) => {
+            e.preventDefault();
+            dropArea.classList.add('border-emerald-500', 'bg-emerald-950/20');
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(name => {
+        dropArea.addEventListener(name, (e) => {
+            e.preventDefault();
+            dropArea.classList.remove('border-emerald-500', 'bg-emerald-950/20');
+        });
+    });
+</script>
+
+</body>
+</html>

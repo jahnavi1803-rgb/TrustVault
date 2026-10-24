@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header('User Profile')}"></head>
+<body class="bg-vault-black text-slate-100 min-h-screen flex flex-col md:flex-row antialiased">
+
+<aside th:replace="~{fragments/layout :: sidebar('profile')}"></aside>
+
+<main class="flex-1 min-w-0 bg-vault-black flex flex-col">
+    <header class="h-16 border-b border-vault-border px-8 flex items-center justify-between bg-vault-dark/40 backdrop-blur-md">
+        <div>
+            <h1 class="text-lg font-bold text-white">Account Settings & Security</h1>
+            <p class="text-xs text-vault-muted">Manage your personal credentials and cryptographic key identity</p>
+        </div>
+    </header>
+
+    <div class="flex-1 p-8 max-w-4xl space-y-8 overflow-y-auto custom-scroll">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <div th:if="${passwordErrorMessage}" class="p-4 rounded-xl bg-red-950/50 border border-red-500/40 text-red-300 text-sm">
+            <span th:text="${passwordErrorMessage}">Password error</span>
+        </div>
+
+        <!-- User Identity Summary -->
+        <div class="bg-vault-card border border-vault-border rounded-2xl p-6 flex items-center space-x-5">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center font-black text-2xl text-slate-950 shadow-lg shadow-emerald-500/20">
+                <span th:text="${#strings.substring(currentUser.username,0,1).toUpperCase()}">U</span>
+            </div>
+            <div>
+                <h2 class="text-lg font-bold text-white" th:text="${currentUser.fullName}">User Full Name</h2>
+                <div class="flex items-center space-x-3 text-xs mt-1">
+                    <span class="text-vault-muted font-mono" th:text="'@' + ${currentUser.username}">@username</span>
+                    <span class="px-2.5 py-0.5 rounded-full font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30" th:text="${currentUser.role.displayName}">Owner</span>
+                    <span class="text-vault-muted" th:text="'Member since ' + ${#temporals.format(currentUser.createdAt, 'yyyy-MM-dd')}">2026-10-24</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Profile Details Update -->
+            <div class="bg-vault-card border border-vault-border rounded-2xl p-6 space-y-4">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-vault-muted">Profile Information</h3>
+
+                <form th:action="@{/profile/update}" th:object="${profileDto}" method="post" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Full Name</label>
+                        <input type="text" th:field="*{fullName}" required
+                               class="w-full px-3.5 py-2.5 rounded-xl bg-vault-dark border border-vault-border text-white text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Email Address</label>
+                        <input type="email" th:field="*{email}" required
+                               class="w-full px-3.5 py-2.5 rounded-xl bg-vault-dark border border-vault-border text-white text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+
+                    <button type="submit" class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs rounded-xl transition-colors">
+                        Save Changes
+                    </button>
+                </form>
+            </div>
+
+            <!-- Password Change -->
+            <div class="bg-vault-card border border-vault-border rounded-2xl p-6 space-y-4">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-vault-muted">Change Password</h3>
+
+                <form th:action="@{/profile/password}" th:object="${passwordDto}" method="post" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Current Password</label>
+                        <input type="password" th:field="*{currentPassword}" required
+                               placeholder="••••••••••••"
+                               class="w-full px-3.5 py-2.5 rounded-xl bg-vault-dark border border-vault-border text-white text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">New Password</label>
+                        <input type="password" th:field="*{newPassword}" required
+                               placeholder="••••••••••••"
+                               class="w-full px-3.5 py-2.5 rounded-xl bg-vault-dark border border-vault-border text-white text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Confirm New Password</label>
+                        <input type="password" th:field="*{confirmNewPassword}" required
+                               placeholder="••••••••••••"
+                               class="w-full px-3.5 py-2.5 rounded-xl bg-vault-dark border border-vault-border text-white text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+
+                    <button type="submit" class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs rounded-xl transition-colors">
+                        Update Password
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

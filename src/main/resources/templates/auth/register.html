@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header('Create Account')}"></head>
+<body class="bg-vault-black text-slate-100 min-h-screen flex items-center justify-center p-4 antialiased">
+
+<div class="w-full max-w-lg my-8">
+    <!-- Brand Header -->
+    <div class="text-center mb-8">
+        <div class="inline-flex w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-400 items-center justify-center text-slate-950 font-black text-2xl shadow-xl shadow-emerald-500/25 mb-4">
+            TV
+        </div>
+        <h1 class="text-3xl font-extrabold tracking-tight text-white">Trust<span class="text-emerald-400">Vault</span></h1>
+        <p class="text-sm text-vault-muted mt-1">Register for Private Document Access</p>
+    </div>
+
+    <!-- Register Card -->
+    <div class="bg-vault-card border border-vault-border rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
+        <h2 class="text-xl font-bold text-white mb-6">Create Your Secure Account</h2>
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <form th:action="@{/register}" th:object="${user}" method="post" class="space-y-4">
+            <div>
+                <label for="fullName" class="block text-xs font-semibold uppercase tracking-wider text-vault-muted mb-2">Full Legal Name</label>
+                <input type="text" id="fullName" th:field="*{fullName}" required
+                       placeholder="Jane Doe"
+                       class="w-full px-4 py-2.5 rounded-xl bg-vault-dark border border-vault-border text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 text-sm">
+                <p th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}" class="text-xs text-red-400 mt-1"></p>
+            </div>
+
+            <div>
+                <label for="username" class="block text-xs font-semibold uppercase tracking-wider text-vault-muted mb-2">Username</label>
+                <input type="text" id="username" th:field="*{username}" required
+                       placeholder="janedoe"
+                       class="w-full px-4 py-2.5 rounded-xl bg-vault-dark border border-vault-border text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 text-sm">
+                <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-xs text-red-400 mt-1"></p>
+            </div>
+
+            <div>
+                <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-vault-muted mb-2">Work Email Address</label>
+                <input type="email" id="email" th:field="*{email}" required
+                       placeholder="jane@company.com"
+                       class="w-full px-4 py-2.5 rounded-xl bg-vault-dark border border-vault-border text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 text-sm">
+                <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-xs text-red-400 mt-1"></p>
+            </div>
+
+            <!-- Role Choice -->
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-vault-muted mb-2">Account Role</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <label class="cursor-pointer border border-vault-border bg-vault-dark p-3 rounded-xl flex flex-col hover:border-emerald-500 transition-colors">
+                        <div class="flex items-center space-x-2">
+                            <input type="radio" th:field="*{roleChoice}" value="OWNER" checked class="text-emerald-500 focus:ring-emerald-500">
+                            <span class="text-sm font-semibold text-white">Owner</span>
+                        </div>
+                        <span class="text-[11px] text-vault-muted mt-1">Can upload, own, and share private documents</span>
+                    </label>
+
+                    <label class="cursor-pointer border border-vault-border bg-vault-dark p-3 rounded-xl flex flex-col hover:border-emerald-500 transition-colors">
+                        <div class="flex items-center space-x-2">
+                            <input type="radio" th:field="*{roleChoice}" value="VIEWER" class="text-emerald-500 focus:ring-emerald-500">
+                            <span class="text-sm font-semibold text-white">Viewer</span>
+                        </div>
+                        <span class="text-[11px] text-vault-muted mt-1">Can only view explicitly shared documents</span>
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-vault-muted mb-2">Master Password</label>
+                <input type="password" id="password" th:field="*{password}" required
+                       placeholder="••••••••••••"
+                       class="w-full px-4 py-2.5 rounded-xl bg-vault-dark border border-vault-border text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 text-sm">
+                <p class="text-[11px] text-vault-muted mt-1">Min 8 characters, uppercase, lowercase, digit, and symbol.</p>
+                <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-xs text-red-400 mt-1"></p>
+            </div>
+
+            <div>
+                <label for="confirmPassword" class="block text-xs font-semibold uppercase tracking-wider text-vault-muted mb-2">Confirm Password</label>
+                <input type="password" id="confirmPassword" th:field="*{confirmPassword}" required
+                       placeholder="••••••••••••"
+                       class="w-full px-4 py-2.5 rounded-xl bg-vault-dark border border-vault-border text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 text-sm">
+                <p th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" class="text-xs text-red-400 mt-1"></p>
+            </div>
+
+            <button type="submit"
+                    class="w-full mt-2 py-3 px-4 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl text-sm transition duration-200 shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2">
+                <span>Complete Registration</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </button>
+        </form>
+
+        <div class="mt-6 pt-6 border-t border-vault-border text-center">
+            <p class="text-sm text-vault-muted">
+                Already registered?
+                <a href="/login" class="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors">Sign In</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

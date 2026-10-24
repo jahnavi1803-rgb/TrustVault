@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="header(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' — TrustVault Secure'">TrustVault Secure</title>
+    <!-- Tailwind CSS CDN for instant styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        vault: {
+                            black: '#07090e',
+                            dark: '#0d121c',
+                            card: '#131b27',
+                            border: '#1f2b3e',
+                            emerald: '#10b981',
+                            emeraldHover: '#059669',
+                            emeraldGlow: 'rgba(16, 185, 129, 0.15)',
+                            muted: '#94a3b8'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #07090e;
+            color: #f1f5f9;
+        }
+        .emerald-glow {
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.18);
+        }
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #0d121c;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #1f2b3e;
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #10b981;
+        }
+    </style>
+</head>
+<body class="bg-vault-black text-slate-100 min-h-screen flex flex-col md:flex-row antialiased">
+
+<!-- Sidebar Fragment -->
+<aside th:fragment="sidebar(activeTab)" class="w-full md:w-64 bg-vault-dark border-r border-vault-border flex flex-col shrink-0">
+    <!-- Brand -->
+    <div class="p-6 border-b border-vault-border flex items-center justify-between">
+        <a href="/dashboard" class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-emerald-500/20">
+                TV
+            </div>
+            <div>
+                <span class="text-lg font-bold tracking-tight text-white block">Trust<span class="text-emerald-400">Vault</span></span>
+                <span class="text-[10px] tracking-widest text-emerald-500/80 uppercase font-semibold block">Zero Trust Cloud</span>
+            </div>
+        </a>
+    </div>
+
+    <!-- Navigation Links -->
+    <nav class="flex-1 p-4 space-y-1.5 custom-scroll overflow-y-auto">
+        <div class="px-3 py-2 text-[11px] font-semibold tracking-wider text-vault-muted uppercase">Workspace</div>
+        
+        <a href="/dashboard" th:classappend="${activeTab == 'dashboard'} ? 'bg-emerald-500/10 text-emerald-400 border-l-2 border-emerald-400 font-semibold' : 'text-slate-300 hover:bg-vault-card hover:text-white'" class="flex items-center px-3 py-2.5 rounded-lg text-sm transition-all duration-150">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            Dashboard
+        </a>
+
+        <a href="/documents" th:classappend="${activeTab == 'documents'} ? 'bg-emerald-500/10 text-emerald-400 border-l-2 border-emerald-400 font-semibold' : 'text-slate-300 hover:bg-vault-card hover:text-white'" class="flex items-center px-3 py-2.5 rounded-lg text-sm transition-all duration-150">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            All Documents
+        </a>
+
+        <a href="/documents/upload" th:if="${currentUser != null and currentUser.role.name() != 'ROLE_VIEWER'}" th:classappend="${activeTab == 'upload'} ? 'bg-emerald-500/10 text-emerald-400 border-l-2 border-emerald-400 font-semibold' : 'text-slate-300 hover:bg-vault-card hover:text-white'" class="flex items-center px-3 py-2.5 rounded-lg text-sm transition-all duration-150">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+            Upload Document
+        </a>
+
+        <a href="/shared-with-me" th:classappend="${activeTab == 'shared'} ? 'bg-emerald-500/10 text-emerald-400 border-l-2 border-emerald-400 font-semibold' : 'text-slate-300 hover:bg-vault-card hover:text-white'" class="flex items-center px-3 py-2.5 rounded-lg text-sm transition-all duration-150">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+            Shared with Me
+        </a>
+
+        <!-- Admin Only Section -->
+        <div sec:authorize="hasAuthority('ROLE_ADMIN')" class="pt-4">
+            <div class="px-3 py-2 text-[11px] font-semibold tracking-wider text-vault-muted uppercase">Administration</div>
+            
+            <a href="/admin/audit" th:classappend="${activeTab == 'audit'} ? 'bg-emerald-500/10 text-emerald-400 border-l-2 border-emerald-400 font-semibold' : 'text-slate-300 hover:bg-vault-card hover:text-white'" class="flex items-center px-3 py-2.5 rounded-lg text-sm transition-all duration-150">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                Tamper-Evident Audit
+            </a>
+
+            <a href="/admin/users" th:classappend="${activeTab == 'users'} ? 'bg-emerald-500/10 text-emerald-400 border-l-2 border-emerald-400 font-semibold' : 'text-slate-300 hover:bg-vault-card hover:text-white'" class="flex items-center px-3 py-2.5 rounded-lg text-sm transition-all duration-150">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                User Management
+            </a>
+        </div>
+    </nav>
+
+    <!-- User Profile Footer -->
+    <div class="p-4 border-t border-vault-border bg-vault-dark/50">
+        <div class="flex items-center justify-between">
+            <a href="/profile" class="flex items-center space-x-3 overflow-hidden">
+                <div class="w-9 h-9 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center font-bold text-emerald-400 text-sm shrink-0"
+                     th:text="${currentUser != null ? #strings.substring(currentUser.username,0,1).toUpperCase() : 'U'}">
+                    U
+                </div>
+                <div class="overflow-hidden">
+                    <p class="text-sm font-medium text-white truncate" th:text="${currentUser != null ? currentUser.fullName : 'User'}">User</p>
+                    <p class="text-xs text-emerald-400 truncate" th:text="${currentUser != null ? currentUser.role.displayName : 'Role'}">Owner</p>
+                </div>
+            </a>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" title="Logout" class="p-1.5 rounded-lg text-vault-muted hover:text-red-400 hover:bg-red-500/10 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                </button>
+            </form>
+        </div>
+    </div>
+</aside>
+
+<!-- Flash Alerts Fragment -->
+<div th:fragment="alerts" class="space-y-3 mb-6">
+    <div th:if="${successMessage}" class="p-4 rounded-xl bg-emerald-950/50 border border-emerald-500/40 text-emerald-300 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <svg class="w-5 h-5 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span class="text-sm font-medium" th:text="${successMessage}">Success message</span>
+        </div>
+    </div>
+
+    <div th:if="${errorMessage}" class="p-4 rounded-xl bg-red-950/50 border border-red-500/40 text-red-300 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <svg class="w-5 h-5 text-red-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span class="text-sm font-medium" th:text="${errorMessage}">Error message</span>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

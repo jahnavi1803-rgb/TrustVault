@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header('Shared with Me')}"></head>
+<body class="bg-vault-black text-slate-100 min-h-screen flex flex-col md:flex-row antialiased">
+
+<aside th:replace="~{fragments/layout :: sidebar('shared')}"></aside>
+
+<main class="flex-1 min-w-0 bg-vault-black flex flex-col">
+    <header class="h-16 border-b border-vault-border px-8 flex items-center justify-between bg-vault-dark/40 backdrop-blur-md">
+        <div>
+            <h1 class="text-lg font-bold text-white">Shared Documents</h1>
+            <p class="text-xs text-vault-muted">Confidential files explicitly shared with your account</p>
+        </div>
+    </header>
+
+    <div class="flex-1 p-8 space-y-6 overflow-y-auto custom-scroll">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <div class="bg-vault-card border border-vault-border rounded-xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-300">
+                    <thead class="text-[11px] font-semibold text-vault-muted uppercase bg-vault-dark/80 border-b border-vault-border">
+                        <tr>
+                            <th class="px-5 py-3.5">Document</th>
+                            <th class="px-5 py-3.5">Category</th>
+                            <th class="px-5 py-3.5">Owner</th>
+                            <th class="px-5 py-3.5">Size</th>
+                            <th class="px-5 py-3.5">Shared Date</th>
+                            <th class="px-5 py-3.5 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-vault-border">
+                        <tr th:if="${#lists.isEmpty(documents)}">
+                            <td colspan="6" class="px-5 py-12 text-center text-vault-muted text-xs">
+                                No documents have been shared with you yet.
+                            </td>
+                        </tr>
+                        <tr th:each="doc : ${documents}" class="hover:bg-vault-dark/40 transition-colors">
+                            <td class="px-5 py-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                                    </div>
+                                    <div>
+                                        <a th:href="@{'/documents/' + ${doc.id}}" class="font-semibold text-white hover:text-emerald-400 transition-colors" th:text="${doc.title}">Doc Title</a>
+                                        <p class="text-xs text-vault-muted font-mono" th:text="${doc.originalFilename}">filename.pdf</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-5 py-4">
+                                <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-vault-dark text-emerald-400 border border-vault-border"
+                                      th:text="${doc.category != null ? doc.category.name : 'Unassigned'}">Confidential</span>
+                            </td>
+                            <td class="px-5 py-4 text-xs text-slate-300" th:text="${doc.owner.username}">owner</td>
+                            <td class="px-5 py-4 text-xs text-vault-muted font-mono" th:text="${doc.fileSizeBytes / 1024 + ' KB'}">128 KB</td>
+                            <td class="px-5 py-4 text-xs text-vault-muted" th:text="${#temporals.format(doc.createdAt, 'yyyy-MM-dd HH:mm')}">2026-10-24</td>
+                            <td class="px-5 py-4 text-right space-x-2">
+                                <a th:href="@{'/documents/' + ${doc.id}}" class="p-2 text-slate-400 hover:text-emerald-400 inline-block transition-colors" title="View Details">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                </a>
+                                <a th:href="@{'/documents/' + ${doc.id} + '/download'}" class="p-2 text-slate-400 hover:text-emerald-400 inline-block transition-colors" title="Download">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

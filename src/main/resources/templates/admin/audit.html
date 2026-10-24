@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header('Tamper-Evident Audit')}"></head>
+<body class="bg-vault-black text-slate-100 min-h-screen flex flex-col md:flex-row antialiased">
+
+<aside th:replace="~{fragments/layout :: sidebar('audit')}"></aside>
+
+<main class="flex-1 min-w-0 bg-vault-black flex flex-col">
+    <header class="h-16 border-b border-vault-border px-8 flex items-center justify-between bg-vault-dark/40 backdrop-blur-md">
+        <div>
+            <h1 class="text-lg font-bold text-white">Cryptographic Audit Trail</h1>
+            <p class="text-xs text-vault-muted">SHA-256 sequential hash-chained immutable security event ledger</p>
+        </div>
+        <form th:action="@{/admin/audit/verify}" method="post">
+            <button type="submit" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs rounded-lg transition-colors flex items-center space-x-2 shadow-sm shadow-emerald-500/20">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                <span>Run Cryptographic Verification</span>
+            </button>
+        </form>
+    </header>
+
+    <div class="flex-1 p-8 space-y-6 overflow-y-auto custom-scroll">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <!-- Verification Banner (Dynamic) -->
+        <div th:if="${verificationSuccess}" class="p-5 rounded-2xl bg-emerald-950/40 border border-emerald-500/50 flex items-start space-x-4">
+            <div class="p-2 bg-emerald-500/20 rounded-xl text-emerald-400 shrink-0">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div>
+                <h3 class="text-sm font-bold text-emerald-300">Cryptographic Integrity Verified</h3>
+                <p class="text-xs text-emerald-400/90 mt-1" th:text="${verificationSuccess}">All records are sequentially intact.</p>
+            </div>
+        </div>
+
+        <div th:if="${verificationFailure}" class="p-5 rounded-2xl bg-red-950/40 border border-red-500/50 flex items-start space-x-4">
+            <div class="p-2 bg-red-500/20 rounded-xl text-red-400 shrink-0">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            </div>
+            <div>
+                <h3 class="text-sm font-bold text-red-300">INTEGRITY BREACH DETECTED</h3>
+                <p class="text-xs text-red-400/90 mt-1" th:text="${verificationFailure}">Verification failed.</p>
+            </div>
+        </div>
+
+        <!-- Chain Integrity Info Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-vault-card border border-vault-border rounded-xl p-4">
+                <span class="text-[11px] font-semibold uppercase text-vault-muted block">Chain Status</span>
+                <span class="text-xl font-bold" th:classappend="${integrity.valid ? 'text-emerald-400' : 'text-red-400'}"
+                      th:text="${integrity.valid ? 'VERIFIED INTACT' : 'COMPROMISED'}">VERIFIED</span>
+            </div>
+            <div class="bg-vault-card border border-vault-border rounded-xl p-4">
+                <span class="text-[11px] font-semibold uppercase text-vault-muted block">Audited Records</span>
+                <span class="text-xl font-bold text-white" th:text="${integrity.totalRecords}">0</span>
+            </div>
+            <div class="bg-vault-card border border-vault-border rounded-xl p-4">
+                <span class="text-[11px] font-semibold uppercase text-vault-muted block">Algorithm</span>
+                <span class="text-xl font-mono text-emerald-400 font-bold">SHA-256 Chained</span>
+            </div>
+        </div>
+
+        <!-- Audit Table -->
+        <div class="bg-vault-card border border-vault-border rounded-xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-300">
+                    <thead class="text-[10px] font-semibold text-vault-muted uppercase bg-vault-dark/80 border-b border-vault-border">
+                        <tr>
+                            <th class="px-4 py-3">Seq #</th>
+                            <th class="px-4 py-3">Timestamp</th>
+                            <th class="px-4 py-3">Actor</th>
+                            <th class="px-4 py-3">Action</th>
+                            <th class="px-4 py-3">Outcome</th>
+                            <th class="px-4 py-3">Details</th>
+                            <th class="px-4 py-3">Cryptographic Hashes (Prev &rarr; Curr)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-vault-border font-mono">
+                        <tr th:if="${#lists.isEmpty(logs)}">
+                            <td colspan="7" class="px-4 py-8 text-center text-vault-muted text-xs font-sans">
+                                No audit events logged yet.
+                            </td>
+                        </tr>
+                        <tr th:each="entry : ${logs}" class="hover:bg-vault-dark/40 transition-colors">
+                            <td class="px-4 py-3 font-bold text-emerald-400" th:text="'#' + ${entry.sequenceNumber}">#1</td>
+                            <td class="px-4 py-3 text-vault-muted" th:text="${#temporals.format(entry.timestamp, 'yyyy-MM-dd HH:mm:ss')}">2026-10-24</td>
+                            <td class="px-4 py-3 font-sans">
+                                <span class="font-semibold text-white" th:text="${entry.actorUsername}">admin</span>
+                                <span class="text-[10px] text-vault-muted block" th:text="${entry.actorRole}">ADMIN</span>
+                            </td>
+                            <td class="px-4 py-3 font-semibold text-white font-sans" th:text="${entry.action}">ACTION</td>
+                            <td class="px-4 py-3">
+                                <span th:if="${entry.outcome.name() == 'SUCCESS'}" class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">SUCCESS</span>
+                                <span th:if="${entry.outcome.name() == 'DENIED'}" class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">DENIED</span>
+                                <span th:if="${entry.outcome.name() == 'FAILURE'}" class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-500/10 text-red-400 border border-red-500/30">FAILED</span>
+                            </td>
+                            <td class="px-4 py-3 font-sans max-w-xs truncate text-slate-400" th:text="${entry.details}">Details</td>
+                            <td class="px-4 py-3 text-[10px] text-vault-muted">
+                                <span class="text-slate-500 truncate inline-block max-w-[120px]" th:title="${entry.previousHash}" th:text="${#strings.substring(entry.previousHash, 0, 10) + '...'}">0000...</span>
+                                &rarr;
+                                <span class="text-emerald-400 truncate inline-block max-w-[120px]" th:title="${entry.currentHash}" th:text="${#strings.substring(entry.currentHash, 0, 10) + '...'}">a4f2...</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

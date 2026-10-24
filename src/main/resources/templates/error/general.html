@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header('Error')}"></head>
+<body class="bg-vault-black text-slate-100 min-h-screen flex items-center justify-center p-4 antialiased">
+
+<div class="max-w-md w-full bg-vault-card border border-vault-border rounded-2xl p-8 text-center shadow-2xl">
+    <div class="w-16 h-16 mx-auto rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-5">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    </div>
+    
+    <h1 class="text-xl font-bold text-white mb-2">Request Error</h1>
+    <p class="text-xs text-vault-muted mb-6" th:text="${errorMessage != null ? errorMessage : 'An error occurred while handling your request.'}">
+        An error occurred.
+    </p>
+
+    <div class="space-y-3">
+        <a href="/dashboard" class="w-full py-2.5 px-4 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl text-xs transition duration-200 block shadow-sm shadow-emerald-500/20">
+            Return to Dashboard
+        </a>
+        <a href="javascript:history.back()" class="w-full py-2.5 px-4 bg-vault-dark hover:bg-vault-border text-slate-300 font-semibold rounded-xl text-xs transition duration-200 block">
+            Go Back
+        </a>
+    </div>
+</div>
+
+</body>
+</html>
