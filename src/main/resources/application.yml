@@ -15,10 +15,9 @@ spring:
     name: TrustVault
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:${DATABASE_URL:jdbc:postgresql://localhost:5432/trustvault}}
-    username: ${SPRING_DATASOURCE_USERNAME:${DATABASE_USERNAME:postgres}}
-    password: ${SPRING_DATASOURCE_PASSWORD:${DATABASE_PASSWORD:postgres}}
-    driver-class-name: ${SPRING_DATASOURCE_DRIVER:org.postgresql.Driver}
+    url: ${SPRING_DATASOURCE_URL:${DATABASE_URL:jdbc:h2:file:./data/trustvault_db;DB_CLOSE_DELAY=-1;MODE=PostgreSQL}}
+    username: ${SPRING_DATASOURCE_USERNAME:${DATABASE_USERNAME:sa}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${DATABASE_PASSWORD:}}
 
   sql:
     init:
