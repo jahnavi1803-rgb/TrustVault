@@ -1,6 +1,6 @@
 # TrustVault — Enterprise Secure Document Management Platform
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/jahnavi1803-rgb/TrustVault)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/teja0906/TrustVault)
 
 TrustVault is a confidential document management platform engineered with zero-trust security principles. It provides private document storage, granular role-based access control (RBAC), fine-grained document sharing (READ vs EDIT), anti-tampering cryptographic audit logging, and private cloud object storage integration with Supabase and Render.
 
@@ -113,7 +113,7 @@ $$\text{Hash}_i = \text{SHA256}(\text{Hash}_{i-1} \parallel \text{Sequence}_i \p
 ### Step-by-Step Launch
 1. Clone the repository:
    ```bash
-   git clone https://github.com/jahnavi1803-rgb/TrustVault.git
+   git clone https://github.com/teja0906/TrustVault.git
    cd TrustVault
    ```
 2. Copy environment variables:
@@ -135,8 +135,8 @@ $$\text{Hash}_i = \text{SHA256}(\text{Hash}_{i-1} \parallel \text{Sequence}_i \p
 
 ## 6. Render Deployment Guide
 
-1. Create a **New Web Service** on [Render](https://render.com).
-2. Connect your GitHub repository `https://github.com/jahnavi1803-rgb/TrustVault.git`.
+1. Create a **New Web Service** on [Render](https://render.com) or use the **[One-Click Deploy](https://render.com/deploy?repo=https://github.com/teja0906/TrustVault)** button.
+2. Connect your GitHub repository `https://github.com/teja0906/TrustVault.git`.
 3. Select **Docker** as the Runtime environment.
 4. Set the following environment variables in the Render Dashboard:
 
