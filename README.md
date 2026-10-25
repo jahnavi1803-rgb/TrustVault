@@ -1,6 +1,9 @@
 # TrustVault — Enterprise Secure Document Management Platform
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/teja0906/TrustVault)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/jahnavi1803-rgb/TrustVault)
+[![Live Demo](https://img.shields.io/badge/Render-Live%20Demo-10b981?style=for-the-badge&logo=render&logoColor=white)](https://trustvault-app-mdj8.onrender.com)
+
+**Live Production URL:** [https://trustvault-app-mdj8.onrender.com](https://trustvault-app-mdj8.onrender.com)
 
 TrustVault is a confidential document management platform engineered with zero-trust security principles. It provides private document storage, granular role-based access control (RBAC), fine-grained document sharing (READ vs EDIT), anti-tampering cryptographic audit logging, and private cloud object storage integration with Supabase and Render.
 
